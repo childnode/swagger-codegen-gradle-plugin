@@ -9,4 +9,6 @@ class SwaggerPluginExtension {
     String apis
     String supportingFiles
     Boolean cleanOutputDir = true
+    Map<String,String> typeMappings
+    Map<String,String> importMappings
 }

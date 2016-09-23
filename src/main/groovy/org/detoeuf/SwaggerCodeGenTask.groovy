@@ -1,10 +1,7 @@
 package org.detoeuf
 
-import io.swagger.codegen.ClientOptInput
-import io.swagger.codegen.ClientOpts
-import io.swagger.codegen.CodegenConfig
 import io.swagger.codegen.DefaultGenerator
-import io.swagger.parser.SwaggerParser
+import io.swagger.codegen.config.CodegenConfigurator
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -13,46 +10,30 @@ class SwaggerCodeGenTask extends DefaultTask {
     @TaskAction
     def swaggerCodeGen() {
         def swaggerPlugin = project.extensions.findByName('swagger').asType(SwaggerPluginExtension.class)
+        CodegenConfigurator config = new CodegenConfigurator()
 
         // Configuration for language
-        CodegenConfig config = forName(swaggerPlugin.language)
+        config.lang = swaggerPlugin.language
 
         // Outputdir + clean
         config.setOutputDir(project.file(swaggerPlugin.output ?: 'build/generated-sources/swagger').absolutePath)
         if (swaggerPlugin.cleanOutputDir == true) {
-        	project.delete(config.getOutputDir())
+            project.delete(config.getOutputDir())
         }
-        
-        // Add additional properties
+
+        // Add additional properties and mappings
         config.additionalProperties()?.putAll(swaggerPlugin.additionalProperties)
+        config.typeMappings()?.putAll(swaggerPlugin.typeMappings)
+        config.importMappings()?.putAll(swaggerPlugin.importMappings)
 
-        if (swaggerPlugin.apis != null) System.setProperty('apis', swaggerPlugin.apis)
-        if (swaggerPlugin.models != null) System.setProperty('models', swaggerPlugin.models)
-        if (swaggerPlugin.supportingFiles != null) System.setProperty('supportingFiles', swaggerPlugin.supportingFiles)
+        if (swaggerPlugin.apis != null) config.systemProperties().putAll([ 'apis': swaggerPlugin.apis ])
+        if (swaggerPlugin.models != null) config.systemProperties().putAll([ 'models': swaggerPlugin.models ])
+        if (swaggerPlugin.supportingFiles != null) config.systemProperties().putAll([ 'supportingFiles': swaggerPlugin.supportingFiles ])
 
-        // Client input
-        ClientOptInput input = new ClientOptInput()
-                .opts(new ClientOpts())
-                .swagger(new SwaggerParser().read(swaggerPlugin.inputSpec))
-                .config(config)
+        config.inputSpec = swaggerPlugin.inputSpec
 
-        new DefaultGenerator().opts(input).generate()
+        new DefaultGenerator()
+                .opts(config.toClientOptInput())
+                .generate()
     }
-
-    private static CodegenConfig forName(String name) {
-        ServiceLoader<CodegenConfig> loader = ServiceLoader.load(CodegenConfig.class)
-        for (CodegenConfig config : loader) {
-            if (config.getName().equals(name)) {
-                return config
-            }
-        }
-
-        // else try to load directly
-        try {
-            return (CodegenConfig) Class.forName(name).newInstance()
-        } catch (Exception e) {
-            throw new RuntimeException("Can't load config class with name ".concat(name), e)
-        }
-    }
-
 }
