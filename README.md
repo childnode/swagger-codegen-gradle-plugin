@@ -76,10 +76,12 @@ gradle swagger
 ### Configuration parameters
 
 - `inputSpec` - swagger spec file path
-- `output` - target output path (default is ${project.build.directory}/generated-sources/swagger)
-- `language` - target generation language. Adapt sourceSet accordingly.
+- `output` - target output path (default is `${project.build.directory}/generated-sources/swagger`)
+- `language` - target generation language. Adapt sourceSet accordingly. [get a peek into known language generators](https://github.com/swagger-api/swagger-codegen/#customizing-the-generator)
 - `additionalProperties` - sets additional properties that can be referenced by the mustache templates in the format of name=value,name=value.  See [Customizing the generator](https://github.com/swagger-api/swagger-codegen/#customizing-the-generator) for list of parameters
 - `models` - [selective generation](https://github.com/swagger-api/swagger-codegen/#selective-generation) of models.  Leave blank to generate models only
 - `apis` - [selective generation](https://github.com/swagger-api/swagger-codegen/#selective-generation) of apis.  Leave blank to generate apis only
 - `supportingFiles` - [selective generation](https://github.com/swagger-api/swagger-codegen/#selective-generation) of supporting files.  Leave blank to generate supporting files only
 - `cleanOutputDir` - set if the output folders should be deleted (default is true)
+- `importMappings` - [bring your own models](https://github.com/swagger-api/swagger-codegen/#bringing-your-own-models)
+- `typeMappings` - [bring your own models](https://github.com/swagger-api/swagger-codegen/#bringing-your-own-models)

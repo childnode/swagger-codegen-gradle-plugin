@@ -4,7 +4,7 @@ class SwaggerPluginExtension {
     String inputSpec
     String output
     String language
-    Map<String,Object> additionalProperties
+    Map<String,String> additionalProperties
     String models
     String apis
     String supportingFiles

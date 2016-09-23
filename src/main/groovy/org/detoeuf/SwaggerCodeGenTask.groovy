@@ -22,13 +22,13 @@ class SwaggerCodeGenTask extends DefaultTask {
         }
 
         // Add additional properties and mappings
-        config.additionalProperties()?.putAll(swaggerPlugin.additionalProperties)
-        config.typeMappings()?.putAll(swaggerPlugin.typeMappings)
-        config.importMappings()?.putAll(swaggerPlugin.importMappings)
+        if (swaggerPlugin.additionalProperties) config.additionalProperties = swaggerPlugin.additionalProperties
+        if (swaggerPlugin.typeMappings) config.typeMappings = swaggerPlugin.typeMappings
+        if (swaggerPlugin.importMappings) config.importMappings = swaggerPlugin.importMappings
 
-        if (swaggerPlugin.apis != null) config.systemProperties().putAll([ 'apis': swaggerPlugin.apis ])
-        if (swaggerPlugin.models != null) config.systemProperties().putAll([ 'models': swaggerPlugin.models ])
-        if (swaggerPlugin.supportingFiles != null) config.systemProperties().putAll([ 'supportingFiles': swaggerPlugin.supportingFiles ])
+        if (swaggerPlugin.apis != null) config.systemProperties?.putAll([ 'apis': swaggerPlugin.apis ])
+        if (swaggerPlugin.models != null) config.systemProperties?.putAll([ 'models': swaggerPlugin.models ])
+        if (swaggerPlugin.supportingFiles != null) config.systemProperties?.putAll([ 'supportingFiles': swaggerPlugin.supportingFiles ])
 
         config.inputSpec = swaggerPlugin.inputSpec
 
